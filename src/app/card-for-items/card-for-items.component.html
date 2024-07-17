@@ -1,0 +1,19 @@
+<mat-card *ngFor="let item of items" class="card mat-elevation-z10 mb-3">
+
+  <mat-card-header>
+    <mat-card-title>
+      <h4>{{ item.name }}</h4>
+    </mat-card-title>
+  </mat-card-header>
+
+
+  <mat-card-actions class="actions mt-3 mb-3">
+    <button
+      mat-raised-button
+      color="secondary"
+      (click)="removeItem(item.id)"
+    >
+      Remove
+    </button>
+  </mat-card-actions>
+</mat-card>
