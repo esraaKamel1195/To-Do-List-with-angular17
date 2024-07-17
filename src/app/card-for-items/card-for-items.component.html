@@ -2,7 +2,7 @@
 
   <mat-card-header>
     <mat-card-title>
-      <h4>{{ item.name }}</h4>
+      <h4>{{ item.description }}</h4>
     </mat-card-title>
   </mat-card-header>
 
@@ -11,7 +11,7 @@
     <button
       mat-raised-button
       color="secondary"
-      (click)="removeItem(item.id)"
+      (click)="removeItem(item!.id)"
     >
       Remove
     </button>

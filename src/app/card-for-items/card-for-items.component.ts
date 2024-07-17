@@ -3,6 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { Item } from '../item';
 
 @Component({
   selector: 'app-card-for-items',
@@ -12,9 +13,9 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './card-for-items.component.scss'
 })
 export class CardForItemsComponent {
-  @Input({ required: true }) items: Array<any> = [];
+  @Input({ required: true }) items: Array<Item> = [];
 
   constuctor() {}
 
-  removeItem(itemId: string) {}
+  removeItem(itemId: number) {}
 }

@@ -14,7 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 export class AppComponent {
   title = 'to-do-list';
 
-  
   login() {}
 
   logout() {}

@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { ToDoListService } from '../to-do-list.service';
 import { CardForItemsComponent } from '../card-for-items/card-for-items.component';
+import { Item } from '../item';
 
 @Component({
   selector: 'app-to-do-list',
@@ -27,7 +28,7 @@ import { CardForItemsComponent } from '../card-for-items/card-for-items.componen
   styleUrl: './to-do-list.component.scss',
 })
 export class ToDoListComponent implements OnInit, OnDestroy{
-  items: Array<any> = [];
+  items: Array<Item> = [];
   length: number = 0;
   pageSize: number = 0;
   pageIndex: number = 0;
