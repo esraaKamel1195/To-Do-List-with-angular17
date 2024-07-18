@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit
+} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
@@ -7,8 +14,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { ToDoListService } from '../to-do-list.service';
 import { CardForItemsComponent } from '../card-for-items/card-for-items.component';
+import { ConfigurationDialogComponent } from '../configuration-dialog/configuration-dialog.component';
 import { Item } from '../item';
 
 @Component({
@@ -22,39 +31,85 @@ import { Item } from '../item';
     CardForItemsComponent,
     MatInputModule,
     MatFormFieldModule,
-    MatButtonModule
+    MatButtonModule,
+    ConfigurationDialogComponent,
   ],
   templateUrl: './to-do-list.component.html',
   styleUrl: './to-do-list.component.scss',
 })
-export class ToDoListComponent implements OnInit, OnDestroy{
+export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   items: Array<Item> = [];
   length: number = 0;
   pageSize: number = 0;
   pageIndex: number = 0;
   pageSizeOptions: Array<number> = [5, 10, 15, 20];
   showFirstLastButtons = true;
-  loading$?: Observable<boolean> = new Observable<false>();
   private listSubscription?: Subscription;
+  @ViewChild('addItem', { static: true }) addItem?: ElementRef;
+  description: string = '';
+  loading: boolean = false;
 
-  constructor(private toDoListService: ToDoListService) {}
+  constructor(
+    private toDoListService: ToDoListService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
+    this.loading = true;
+    this.addItems();
+  }
+
+  addItems() {
     this.listSubscription = this.toDoListService.getList().subscribe({
-      next: (items: any) => {
-        this.items = items;
-        this.length = this.items.length;
-        // this.pageSizeOptions.push();
+      next: (res) => {
+        this.items = res;
+        this.loading = false;
       },
-      error: (error: any) => {
+      error: (error) => {
         console.log(error);
-      },
+        this.loading = false;
+      }
     });
   }
 
-  onAddItem() {}
+  ngAfterViewInit(): void {
+    this.description = this.addItem?.nativeElement.textContent;
+  }
 
-  onRemoveAll() {}
+  onAddItem(description: string) {
+    this.toDoListService
+      .setList(description)
+      .subscribe({
+        next: (result: any) => {
+          this.addItems();
+        },
+        error: (error: Error) => {
+          console.log(error);
+        },
+      });
+  }
+
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string
+  ): void {
+    this.dialog
+      .open(ConfigurationDialogComponent, {
+        width: '250px',
+        enterAnimationDuration,
+        exitAnimationDuration,
+      })
+      .afterClosed()
+      .subscribe((response) => (response ? this.onRemoveAll() : ''));
+  }
+
+  onRemoveAll() {
+    this.toDoListService.removeList().subscribe({
+      next: (res: any) => {
+        console.log(res);
+      }
+    });
+  }
 
   handlePageEvent(event: PageEvent) {
     this.length = event.length;

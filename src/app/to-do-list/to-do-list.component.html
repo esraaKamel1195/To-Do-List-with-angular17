@@ -1,28 +1,32 @@
 <div class="container-panel">
-  <div class="header">
-    <h2 class="title mt-3">To DO List</h2>
-    <button mat-mini-fab>
-      <mat-icon class="delete-btn" (click)="onRemoveAll()">delete</mat-icon>
+  <div class="header" style="display: flex;">
+    <h2 class="title mt-3">To Do List</h2>
+    <button mat-mini-fab class="mt-2" (click)="openDialog('2000ms', '1500ms')">
+      <mat-icon class="delete-btn">delete</mat-icon>
     </button>
   </div>
 
-  <div class="spinner-container" *ngIf="!(loading$ | async)">
+  <div class="spinner-container" *ngIf="loading">
     <mat-spinner></mat-spinner>
   </div>
 
-  <mat-form-field class="search-input" appearance="outline">
-    <mat-label>Search with name or username</mat-label>
-    <input matInput placeholder="Placeholder">
-  </mat-form-field>
+  <div style="display: flex;">
+    <mat-form-field class="search-input" appearance="fill">
+      <mat-label>Add item to list</mat-label>
+      <input matInput #addItem placeholder="Add item to list">
+    </mat-form-field>
 
-  <button mat-mini-fab>
-    <mat-icon class="add-btn" (click)="onAddItem()">add</mat-icon>
-  </button>
+    <button mat-mini-fab class="ms-3 mt-2" (click)="onAddItem(addItem.value)">
+      <mat-icon class="add-btn">add</mat-icon>
+    </button>
+  </div>
 
-  <app-card-for-items [items]="items"> </app-card-for-items>
+  <div>
+    <app-card-for-items [items]="items"></app-card-for-items>
+  </div>
 </div>
 
-<mat-paginator
+<!-- <mat-paginator
   (page)="handlePageEvent($event)"
   [length]="length"
   [pageSize]="pageSize"
@@ -32,4 +36,4 @@
   aria-label="Select page"
   class="paginator"
 >
-</mat-paginator>
+</mat-paginator> -->

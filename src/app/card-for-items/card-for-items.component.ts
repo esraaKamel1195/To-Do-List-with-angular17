@@ -3,19 +3,30 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Item } from '../item';
+import { ToDoListService } from '../to-do-list.service';
 
 @Component({
   selector: 'app-card-for-items',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, RouterModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    RouterModule,
+    MatIconModule,
+  ],
   templateUrl: './card-for-items.component.html',
-  styleUrl: './card-for-items.component.scss'
+  styleUrl: './card-for-items.component.scss',
 })
 export class CardForItemsComponent {
   @Input({ required: true }) items: Array<Item> = [];
 
-  constuctor() {}
+  constructor(private toDoListService: ToDoListService) {}
 
-  removeItem(itemId: number) {}
+  removeItem(item: any) {
+    console.log(item);
+    this.items = this.toDoListService.removeItem(item);
+  }
 }
