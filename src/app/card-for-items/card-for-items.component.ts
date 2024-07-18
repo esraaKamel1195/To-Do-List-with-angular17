@@ -27,6 +27,10 @@ export class CardForItemsComponent {
 
   removeItem(item: any) {
     console.log(item);
-    this.items = this.toDoListService.removeItem(item);
+    this.toDoListService.removeItem(item.id).subscribe({
+      next: (res: any) => {
+        console.log(res);
+      },
+    });
   }
 }

@@ -14,39 +14,62 @@ export class ToDoListService {
   constructor(private httpClient: HttpClient) {}
 
   getList(): Observable<any> {
-    return this.httpClient.get<any>('https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json').pipe(
-      catchError((error) => {
-        return throwError(() => console.log(error));
-      }),
-      map((responseData: { [key: string]: any[] }) => {
-        const modifiedData: any = [];
-        for (const key in responseData) {
-          if (responseData.hasOwnProperty(key)) {
-            modifiedData.push({responseData[key], id: key});
+    return this.httpClient
+      .get<any>(
+        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json'
+      )
+      .pipe(
+        catchError((error) => {
+          return throwError(() => console.log(error));
+        }),
+        map((responseData: { [key: string]: any[] }) => {
+          const modifiedData: any = [];
+          for (const key in responseData) {
+            if (responseData.hasOwnProperty(key)) {
+              modifiedData.push({ ...responseData[key], id: key });
+            }
           }
-        }
-        return modifiedData;
-      })
-    );
+          return modifiedData;
+        })
+      );
   }
 
   setList(itemDesciption: string): any {
     return this.httpClient
-      .post<any>('https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json', {
-        description: itemDesciption,
-      })
+      .post<any>(
+        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json',
+        {
+          description: itemDesciption,
+        }
+      )
       .pipe(
         catchError((error) => {
           return throwError(() => console.log(error));
         }),
         map((responseData) => {
-          this.items = responseData
+          this.items = responseData;
           return this.items;
-      })
+        })
       );
   }
 
-  removeItem(item: Item): any {
+  removeItem(item: string): any {
+    return this.httpClient
+      .delete(
+        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json/' + item
+      )
+      .pipe(
+        catchError((error) => {
+          return throwError(() => console.log(error));
+        }),
+        map((responseData) => {
+          console.log('remove item');
+          return responseData;
+        })
+      );
+  }
+
+  removeList(): any {
     return this.httpClient
       .delete('https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json')
       .pipe(
@@ -54,22 +77,9 @@ export class ToDoListService {
           return throwError(() => console.log(error));
         }),
         map((responseData) => {
+          this.items = [];
           return responseData;
-      })
+        })
       );
-  }
-
-  removeList(): any {
-    return this.httpClient
-    .delete('https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json')
-    .pipe(
-      catchError((error) => {
-        return throwError(() => console.log(error));
-      }),
-      map((responseData) => {
-        this.items = [];
-        return responseData;
-    })
-    );
   }
 }
