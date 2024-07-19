@@ -9,26 +9,28 @@ import { Item } from './item';
 export class ToDoListService {
   items: Array<Item> = [];
   itemObservable?: Subject<Item[]> = new Subject<Item[]>();
-  Api_url: string = 'https://to-do-list-8161a-default-rtdb.firebaseio.com';
+  Api_url: string = 'https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json';
 
   constructor(private httpClient: HttpClient) {}
 
   getList(): Observable<any> {
     return this.httpClient
       .get<any>(
-        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json'
+        'https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json'
       )
       .pipe(
         catchError((error) => {
           return throwError(() => console.log(error));
         }),
         map((responseData: { [key: string]: any[] }) => {
+          console.log(responseData);
           const modifiedData: any = [];
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
               modifiedData.push({ ...responseData[key], id: key });
             }
           }
+          console.log(modifiedData);
           return modifiedData;
         })
       );
@@ -37,7 +39,7 @@ export class ToDoListService {
   setList(itemDesciption: string): any {
     return this.httpClient
       .post<any>(
-        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json',
+        'https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json',
         {
           description: itemDesciption,
         }
@@ -54,9 +56,11 @@ export class ToDoListService {
   }
 
   removeItem(item: string): any {
+    console.log('item', item);
+
     return this.httpClient
       .delete(
-        'https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json/' + item
+        `https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json/${item}`
       )
       .pipe(
         catchError((error) => {
@@ -71,7 +75,7 @@ export class ToDoListService {
 
   removeList(): any {
     return this.httpClient
-      .delete('https://to-do-list-8161a-default-rtdb.firebaseio.com/list.json')
+      .delete('https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json')
       .pipe(
         catchError((error) => {
           return throwError(() => console.log(error));

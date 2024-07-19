@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'to-do-list';
+  title = 'To-Do-List';
 
   login() {}
 

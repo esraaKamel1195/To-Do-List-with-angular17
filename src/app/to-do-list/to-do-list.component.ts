@@ -4,9 +4,9 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
 } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -56,10 +56,10 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.addItems();
+    this.getItems();
   }
 
-  addItems() {
+  getItems() {
     this.listSubscription = this.toDoListService.getList().subscribe({
       next: (res) => {
         this.items = res;
@@ -68,7 +68,7 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
       error: (error) => {
         console.log(error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -77,16 +77,17 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onAddItem(description: string) {
-    this.toDoListService
-      .setList(description)
-      .subscribe({
-        next: (result: any) => {
-          this.addItems();
-        },
-        error: (error: Error) => {
-          console.log(error);
-        },
-      });
+    this.loading = true;
+    this.toDoListService.setList(description).subscribe({
+      next: (result: any) => {
+        this.getItems();
+        this.loading = false;
+      },
+      error: (error: Error) => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
   }
 
   openDialog(
@@ -104,10 +105,16 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onRemoveAll() {
+    this.loading = true;
     this.toDoListService.removeList().subscribe({
       next: (res: any) => {
-        console.log(res);
-      }
+        this.items = [];
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.loading = false;
+      },
     });
   }
 
