@@ -40,14 +40,15 @@ import { Item } from '../item';
 export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   items: Array<Item> = [];
   length: number = 0;
-  pageSize: number = 0;
+  pageSize: number = 5;
   pageIndex: number = 0;
-  pageSizeOptions: Array<number> = [5, 10, 15, 20];
+  pageSizeOptions: Array<number> = [5, 10, 15, 20, 25];
   showFirstLastButtons = true;
   private listSubscription?: Subscription;
   @ViewChild('addItem', { static: true }) addItem?: ElementRef;
   description: string = '';
   loading: boolean = false;
+  newItems: Item[] = [];
 
   constructor(
     private toDoListService: ToDoListService,
@@ -63,6 +64,8 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.listSubscription = this.toDoListService.getList().subscribe({
       next: (res) => {
         this.items = res;
+        this.length = this.items.length;
+        this.handleList();
         this.loading = false;
       },
       error: (error) => {
@@ -77,7 +80,12 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onAddItem(description: string) {
+    if(!description) {
+      return;
+    }
     this.loading = true;
+    this.description = description;
+
     this.toDoListService.setList(description).subscribe({
       next: (result: any) => {
         this.getItems();
@@ -108,7 +116,8 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loading = true;
     this.toDoListService.removeList().subscribe({
       next: (res: any) => {
-        this.items = [];
+        this.items = this.newItems = [];
+        this.length = this.items.length;
         this.loading = false;
       },
       error: (err: any) => {
@@ -119,9 +128,28 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handlePageEvent(event: PageEvent) {
+    this.loading = true;
     this.length = event.length;
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
+
+    this.handleList();
+  }
+
+  handleList() {
+    this.newItems = this.items.slice(
+      this.pageIndex * this.pageSize,
+      this.pageIndex * this.pageSize + this.pageSize
+    );
+
+    this.loading = false;
+  }
+
+  onDeleteItem(event: any) {
+    console.log(event);
+    
+    // this.newItems.splice(event.index, 1);
+    this.getItems();
   }
 
   ngOnDestroy(): void {

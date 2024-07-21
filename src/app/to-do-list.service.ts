@@ -23,14 +23,12 @@ export class ToDoListService {
           return throwError(() => console.log(error));
         }),
         map((responseData: { [key: string]: any[] }) => {
-          console.log(responseData);
           const modifiedData: any = [];
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
               modifiedData.push({ ...responseData[key], id: key });
             }
           }
-          console.log(modifiedData);
           return modifiedData;
         })
       );
@@ -56,11 +54,9 @@ export class ToDoListService {
   }
 
   removeItem(item: string): any {
-    console.log('item', item);
-
     return this.httpClient
       .delete(
-        `https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems.json/${item}`
+        `https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems/${item}.json`
       )
       .pipe(
         catchError((error) => {
