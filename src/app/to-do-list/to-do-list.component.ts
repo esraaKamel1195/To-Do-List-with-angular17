@@ -4,7 +4,6 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  AfterViewInit,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -37,7 +36,7 @@ import { Item } from '../item';
   templateUrl: './to-do-list.component.html',
   styleUrl: './to-do-list.component.scss',
 })
-export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ToDoListComponent implements OnInit, OnDestroy {
   items: Array<Item> = [];
   length: number = 0;
   pageSize: number = 5;
@@ -46,9 +45,9 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   showFirstLastButtons = true;
   private listSubscription?: Subscription;
   @ViewChild('addItem', { static: true }) addItem?: ElementRef;
-  description: string = '';
   loading: boolean = false;
   newItems: Item[] = [];
+  ifItemExist: boolean = false;
 
   constructor(
     private toDoListService: ToDoListService,
@@ -75,16 +74,16 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    this.description = this.addItem?.nativeElement.textContent;
-  }
-
   onAddItem(description: string) {
-    if(!description) {
+    this.ifItemExist = this.items.some(
+      (item) => item.description == description
+    );
+
+    if (!description || this.ifItemExist) {
       return;
     }
+
     this.loading = true;
-    this.description = description;
 
     this.toDoListService.setList(description).subscribe({
       next: (result: any) => {
@@ -147,7 +146,7 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onDeleteItem(event: any) {
     console.log(event);
-    
+
     // this.newItems.splice(event.index, 1);
     this.getItems();
   }

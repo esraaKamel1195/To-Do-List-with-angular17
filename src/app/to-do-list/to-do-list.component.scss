@@ -11,7 +11,8 @@
 
 .container-panel {
   width: 100%;
-  overflow: scroll;
+  overflow: unset;
+  overflow-y: scroll;
   .body {
     max-width: 350px;
     min-height: 470px;
