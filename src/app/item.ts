@@ -1,3 +1,4 @@
 export interface Item {
-    description: string,
+  description: string;
+  id?: string;
 }

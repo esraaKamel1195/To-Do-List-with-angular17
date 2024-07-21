@@ -4,9 +4,9 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
 } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -40,14 +40,15 @@ import { Item } from '../item';
 export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   items: Array<Item> = [];
   length: number = 0;
-  pageSize: number = 0;
+  pageSize: number = 5;
   pageIndex: number = 0;
-  pageSizeOptions: Array<number> = [5, 10, 15, 20];
+  pageSizeOptions: Array<number> = [5, 10, 15, 20, 25];
   showFirstLastButtons = true;
   private listSubscription?: Subscription;
   @ViewChild('addItem', { static: true }) addItem?: ElementRef;
   description: string = '';
   loading: boolean = false;
+  newItems: Item[] = [];
 
   constructor(
     private toDoListService: ToDoListService,
@@ -56,19 +57,21 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.addItems();
+    this.getItems();
   }
 
-  addItems() {
+  getItems() {
     this.listSubscription = this.toDoListService.getList().subscribe({
       next: (res) => {
         this.items = res;
+        this.length = this.items.length;
+        this.handleList();
         this.loading = false;
       },
       error: (error) => {
         console.log(error);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -77,16 +80,22 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onAddItem(description: string) {
-    this.toDoListService
-      .setList(description)
-      .subscribe({
-        next: (result: any) => {
-          this.addItems();
-        },
-        error: (error: Error) => {
-          console.log(error);
-        },
-      });
+    if(!description) {
+      return;
+    }
+    this.loading = true;
+    this.description = description;
+
+    this.toDoListService.setList(description).subscribe({
+      next: (result: any) => {
+        this.getItems();
+        this.loading = false;
+      },
+      error: (error: Error) => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
   }
 
   openDialog(
@@ -104,17 +113,43 @@ export class ToDoListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onRemoveAll() {
+    this.loading = true;
     this.toDoListService.removeList().subscribe({
       next: (res: any) => {
-        console.log(res);
-      }
+        this.items = this.newItems = [];
+        this.length = this.items.length;
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.loading = false;
+      },
     });
   }
 
   handlePageEvent(event: PageEvent) {
+    this.loading = true;
     this.length = event.length;
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
+
+    this.handleList();
+  }
+
+  handleList() {
+    this.newItems = this.items.slice(
+      this.pageIndex * this.pageSize,
+      this.pageIndex * this.pageSize + this.pageSize
+    );
+
+    this.loading = false;
+  }
+
+  onDeleteItem(event: any) {
+    console.log(event);
+    
+    // this.newItems.splice(event.index, 1);
+    this.getItems();
   }
 
   ngOnDestroy(): void {
