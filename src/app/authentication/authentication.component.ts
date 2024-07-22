@@ -48,7 +48,5 @@ export class AuthenticationComponent implements OnInit {
     });
   }
 
-  login() {
-    
-  }
+  login() {}
 }
