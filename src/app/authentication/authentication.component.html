@@ -1,1 +1,33 @@
-<p>authentication works!</p>
+<mat-card class="auth-page">
+  <mat-card-title style="color: #ffffff" class="mb-3">{{pageMode}}</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" class="login-form">
+      <mat-form-field>
+        <input
+          matInput
+          type="email"
+          placeholder="Email"
+          formControlName="email"
+        />
+      </mat-form-field>
+
+      <mat-form-field>
+        <input
+          matInput
+          type="password"
+          placeholder="Password"
+          formControlName="password"
+        />
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="login()"
+        [disabled]="!form.valid"
+      >
+        Login
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
