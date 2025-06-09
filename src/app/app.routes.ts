@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { canActivateGuard } from './authentication/guards/can-activate.guard';
 
 export const routes: Routes = [
   {
@@ -8,6 +9,7 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [canActivateGuard],
     loadComponent: () =>
       import('./to-do-list/to-do-list.component').then(
         (c) => c.ToDoListComponent
@@ -15,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'list',
+    canActivate: [canActivateGuard],
     loadComponent: () =>
       import('./to-do-list/to-do-list.component').then(
         (c) => c.ToDoListComponent
