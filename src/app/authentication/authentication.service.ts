@@ -7,6 +7,8 @@ import { Injectable } from '@angular/core';
 export class AuthenticationService {
 
   constructor(private httpClient: HttpClient) {}
+  
+  signUp() {}
 
   login() {}
 
@@ -15,4 +17,5 @@ export class AuthenticationService {
   handleError() {}
 
   handleAuthentication() {}
+
 }
