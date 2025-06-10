@@ -6,13 +6,16 @@ import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { TodoEffects } from './todo.effects';
+import { reducer } from './todo.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), provideAnimations(),
+    provideRouter(routes),
+    provideAnimations(),
     provideHttpClient(),
-    provideStore(),
-    provideEffects(),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
-]
+    provideStore({ todo: reducer }),
+    provideEffects([TodoEffects]),
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+  ],
 };
