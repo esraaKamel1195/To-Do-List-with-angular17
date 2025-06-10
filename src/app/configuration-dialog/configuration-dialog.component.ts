@@ -24,5 +24,4 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class ConfigurationDialogComponent {
   constructor(public dialogRef: MatDialogRef<ConfigurationDialogComponent>) {}
-  
 }
