@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToDoListService } from '../to-do-list.service';
 import { CardForItemsComponent } from '../card-for-items/card-for-items.component';
 import { ConfigurationDialogComponent } from '../configuration-dialog/configuration-dialog.component';
-import { Item } from '../item';
+import { TodoItem } from '../todo.model';
 
 @Component({
   selector: 'app-to-do-list',
@@ -37,7 +37,7 @@ import { Item } from '../item';
   styleUrl: './to-do-list.component.scss',
 })
 export class ToDoListComponent implements OnInit, OnDestroy {
-  items: Array<Item> = [];
+  items: Array<TodoItem> = [];
   length: number = 0;
   pageSize: number = 5;
   pageIndex: number = 0;
@@ -46,7 +46,7 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   private listSubscription?: Subscription;
   @ViewChild('addItem', { static: true }) addItem?: ElementRef;
   loading: boolean = false;
-  newItems: Item[] = [];
+  newItems: TodoItem[] = [];
   ifItemExist: boolean = false;
 
   constructor(
@@ -74,18 +74,18 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     });
   }
 
-  onAddItem(description: string) {
+  onAddItem(title: string) {
     this.ifItemExist = this.items.some(
-      (item) => item.description == description
+      (item) => item.title == title
     );
 
-    if (!description || this.ifItemExist) {
+    if (!title || this.ifItemExist) {
       return;
     }
 
     this.loading = true;
 
-    this.toDoListService.setList(description).subscribe({
+    this.toDoListService.setList(title).subscribe({
       next: (result: any) => {
         this.getItems();
         this.loading = false;
@@ -146,7 +146,6 @@ export class ToDoListComponent implements OnInit, OnDestroy {
 
   onDeleteItem(event: any) {
     console.log(event);
-
     // this.newItems.splice(event.index, 1);
     this.getItems();
   }

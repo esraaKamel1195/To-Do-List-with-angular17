@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, Subject, throwError } from 'rxjs';
-import { Item } from './item';
+import { TodoItem } from './todo.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToDoListService {
-  items: Array<Item> = [];
-  itemObservable?: Subject<Item[]> = new Subject<Item[]>();
+  items: Array<TodoItem> = [];
+  itemObservable?: Subject<TodoItem []> = new Subject<TodoItem []>();
   Api_url: string =
     'https://to-do-list-8161a-default-rtdb.firebaseio.com/toDoItems';
 
@@ -31,10 +31,10 @@ export class ToDoListService {
     );
   }
 
-  setList(itemDesciption: string): any {
+  setList(itemTitle: string): any {
     return this.httpClient
       .post<any>(`${this.Api_url}.json`, {
-        description: itemDesciption,
+        title: itemTitle,
       })
       .pipe(
         catchError((error) => {
