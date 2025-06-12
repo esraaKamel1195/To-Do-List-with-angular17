@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TodoItem } from '../todo.model';
 import { ToDoListService } from '../to-do-list.service';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-card-for-items',
   standalone: true,
@@ -20,7 +21,7 @@ import { ToDoListService } from '../to-do-list.service';
   styleUrl: './card-for-items.component.scss',
 })
 export class CardForItemsComponent {
-  @Input({ required: true }) items: Array<TodoItem> = [];
+  @Input({ required: true }) items$: Observable<TodoItem[]> = new Observable();
   @Output() onDeleteItem: EventEmitter<any> = new EventEmitter();
 
   constructor(private toDoListService: ToDoListService) {}

@@ -4,8 +4,9 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
+  // signal
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -18,6 +19,10 @@ import { ToDoListService } from '../to-do-list.service';
 import { CardForItemsComponent } from '../card-for-items/card-for-items.component';
 import { ConfigurationDialogComponent } from '../configuration-dialog/configuration-dialog.component';
 import { TodoItem } from '../todo.model';
+import { Store } from '@ngrx/store';
+import { TodoActions } from '../todo.actions';
+import { selectAllTodos } from '../todo.selectors';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-to-do-list',
@@ -31,6 +36,7 @@ import { TodoItem } from '../todo.model';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    FormsModule,
     ConfigurationDialogComponent,
   ],
   templateUrl: './to-do-list.component.html',
@@ -48,11 +54,16 @@ export class ToDoListComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   newItems: TodoItem[] = [];
   ifItemExist: boolean = false;
+  title = '';
+  todos$: Observable<TodoItem[]> = this.store.select(selectAllTodos);
 
   constructor(
     private toDoListService: ToDoListService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private store: Store
+  ) {
+    this.store.dispatch(TodoActions.loadTodos());
+  }
 
   ngOnInit(): void {
     this.loading = true;
@@ -74,10 +85,20 @@ export class ToDoListComponent implements OnInit, OnDestroy {
     });
   }
 
+  add() {
+    if (this.title.trim()) {
+      console.log('title', this.title);
+      this.store.dispatch(TodoActions.addTodo({ title: this.title }));
+      this.title = '';
+    }
+  }
+
+  toggle(id: string) {
+    this.store.dispatch(TodoActions.toggle({ id }));
+  }
+
   onAddItem(title: string) {
-    this.ifItemExist = this.items.some(
-      (item) => item.title == title
-    );
+    this.ifItemExist = this.items.some((item) => item.title == title);
 
     if (!title || this.ifItemExist) {
       return;

@@ -1,19 +1,21 @@
-<mat-card *ngFor="let item of items; let i = index" class="card mat-elevation-z10 mb-3">
+<!-- @for(let item of items$ | async; let i = index) { -->
+  <mat-card *ngFor="let item of items$ | async; let i = index" class="card mat-elevation-z10 mb-3">
+    <mat-card-header>
+      <mat-card-title>
+        <h4>{{ item.title }}</h4>
+      </mat-card-title>
+    </mat-card-header>
 
-  <mat-card-header>
-    <mat-card-title>
-      <h4>{{ item.title }}</h4>
-    </mat-card-title>
-  </mat-card-header>
+    <mat-card-content>
+      <p>{{ item.description }}</p>
+      <label for="completed">completed</label>
+      <input type="checkbox" id="completed" [checked]="item.completed" />
+    </mat-card-content>
 
-  <mat-card-content>
-    <p>{{ item.description }}</p>
-    
-  </mat-card-content>
-
-  <mat-card-actions class="actions mb-3">
-    <button mat-mini-fab class="me-3" (click)="removeItem(item, i)">
-      <mat-icon class="delete-btn">delete</mat-icon>
-    </button>
-  </mat-card-actions>
-</mat-card>
+    <mat-card-actions class="actions mb-3">
+      <button mat-mini-fab class="me-3" (click)="removeItem(item, i)">
+        <mat-icon class="delete-btn">delete</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+<!-- } -->
