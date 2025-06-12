@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Add new Item</h2>
+<mat-dialog-content>
+  Would you like to delete All items in list?
+  <div style="display: flex">
+      <mat-form-field class="search-input" appearance="fill">
+        <mat-label>Add item to list</mat-label>
+        <input matInput #addItem placeholder="Add item to list" />
+        <mat-hint *ngIf="ifItemExist" class="mt-2 mb-2" style="color: red">Item already exist</mat-hint>
+      </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial >Add</button>
+</mat-dialog-actions>
